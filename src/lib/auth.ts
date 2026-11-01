@@ -7,8 +7,6 @@ const client = new MongoClient(process.env.MONGODB_URI!);
 const db = client.db("booknook");
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
-  trustedOrigins: ["http://localhost:3000"],
   database: mongodbAdapter(db, { client }),
   emailAndPassword: {
     enabled: true,
@@ -20,4 +18,12 @@ export const auth = betterAuth({
     },
   },
   plugins: [jwt()],
+  // 👇 এখানে আপনার সব Vercel ডোমেইন যোগ করুন
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://b14-a08-book-nook-client.vercel.app",
+    "https://b14-a08-book-nook-client-git-main-b14-a5-dev-stack.vercel.app",
+    // চাইলে Vercel-এর সব প্রিভিউ ডোমেইন অ্যালাউ করতে:
+    ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+  ],
 });
