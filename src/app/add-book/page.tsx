@@ -29,7 +29,9 @@ export default function AddBookPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+    
+    // 👇 TypeScript এরর ফিক্স করার জন্য 'any' টাইপ ব্যবহার করা হলো
+    const data: any = Object.fromEntries(formData.entries());
     
     // totalCopies কে নাম্বারে কনভার্ট করা হচ্ছে
     data.totalCopies = Number(data.totalCopies);
@@ -48,7 +50,6 @@ export default function AddBookPage() {
       router.push("/books");
     } catch (error: any) {
       console.error("Error adding book:", error);
-      // সার্ভার ডাউন থাকলে বা JSON ফরম্যাট ভুল হলে এই মেসেজ দেখাবে
       toast.error(error.message || "Failed to connect to the server. Make sure it's running.");
     } finally {
       setLoading(false);
