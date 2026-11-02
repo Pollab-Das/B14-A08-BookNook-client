@@ -102,7 +102,7 @@ export default function RegisterPage() {
             <Input name="password" type="password" required placeholder="Min 6 chars, 1 Uppercase, 1 Lowercase" className="mt-1" />
           </div>
 
-          <Button type="submit" disabled={loading || googleLoading} className="w-full bg-forest hover:bg-forest-light">
+          <Button type="submit" disabled={loading || googleLoading} className="w-full bg-forest hover:bg-forest-light dark:bg-terracotta dark:hover:bg-[#a37f6c] text-white h-11 text-base font-semibold mt-2">
             {loading ? "Creating account..." : "Register"}
           </Button>
         </form>

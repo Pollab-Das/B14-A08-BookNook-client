@@ -20,7 +20,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${lora.variable}`}>
-      <body className="min-h-screen flex flex-col font-sans antialiased bg-cream text-text-main">
+      {/* 👇 এখানে ডার্ক মোডের ব্যাকগ্রাউন্ড ও টেক্সট কালার যোগ করা হয়েছে */}
+      <body className="min-h-screen flex flex-col font-sans antialiased bg-cream text-text-main dark:bg-[#121212] dark:text-gray-200 transition-colors duration-300">
         <Navbar />
         <main className="flex-1">
           {children}

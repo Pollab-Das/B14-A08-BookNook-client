@@ -69,7 +69,7 @@ export default function MyBorrowsPage() {
                   <td className="px-6 py-4">{format(new Date(borrow.borrowDate), "MMM dd, yyyy")}</td>
                   <td className="px-6 py-4 text-terracotta font-medium">{format(new Date(borrow.returnDate), "MMM dd, yyyy")}</td>
                   <td className="px-6 py-4 text-right">
-                    <Button onClick={() => handleReturn(borrow._id)} className="bg-forest hover:bg-forest-light">
+                    <Button onClick={() => handleReturn(borrow._id)} className="bg-forest hover:bg-forest-light dark:bg-terracotta dark:hover:bg-[#a37f6c] text-white font-medium">
                       Return Book
                     </Button>
                   </td>

@@ -83,7 +83,7 @@ function LoginForm() {
             <Input name="password" type="password" required placeholder="Your password" className="mt-1" />
           </div>
 
-          <Button type="submit" disabled={loading || googleLoading} className="w-full bg-forest hover:bg-forest-light">
+          <Button type="submit" disabled={loading || googleLoading} className="w-full bg-forest hover:bg-forest-light dark:bg-terracotta dark:hover:bg-[#a37f6c] text-white h-11 text-base font-semibold mt-2">
             {loading ? "Logging in..." : "Login"}
           </Button>
         </form>

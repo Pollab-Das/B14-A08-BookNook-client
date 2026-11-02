@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { useApi } from "@/hooks/useApi";
@@ -15,13 +15,17 @@ export default function AddBookPage() {
   const { fetchWithAuth } = useApi();
   const [loading, setLoading] = useState(false);
 
-  if (isPending) {
-    return <div className="text-center py-20 text-text-muted">Loading...</div>;
-  }
+  // 👇 লগইন চেক এবং রিডাইরেক্ট লজিক
+  useEffect(() => {
+    if (!isPending && !session) {
+      toast.error("Please login to add a book.");
+      router.push(`/login?redirect=/add-book`);
+    }
+  }, [session, isPending, router]);
 
-  if (!session) {
-    router.push("/login?redirect=/add-book");
-    return null;
+  // লোডিং বা সেশন না থাকলে কিছুই রেন্ডার হবে না (পেজ ফ্ল্যাশ এড়াতে)
+  if (isPending || !session) {
+    return <div className="text-center py-20 text-text-muted">Loading...</div>;
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,11 +33,7 @@ export default function AddBookPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    
-    // 👇 TypeScript এরর ফিক্স করার জন্য 'any' টাইপ ব্যবহার করা হলো
     const data: any = Object.fromEntries(formData.entries());
-    
-    // totalCopies কে নাম্বারে কনভার্ট করা হচ্ছে
     data.totalCopies = Number(data.totalCopies);
 
     try {
@@ -58,21 +58,21 @@ export default function AddBookPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
-      <Card className="p-8 bg-white border-border-light">
-        <h1 className="font-serif text-3xl font-bold text-forest mb-6">Add a New Book</h1>
+      <Card className="p-8 bg-white dark:bg-[#1e1e1e] border-border-light dark:border-gray-800 shadow-lg">
+        <h1 className="font-serif text-3xl font-bold text-forest dark:text-cream mb-6">Add a New Book</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm font-medium">Book Title</label>
-            <Input name="title" required placeholder="The Great Gatsby" />
+            <label className="text-sm font-medium text-text-main dark:text-gray-300">Book Title</label>
+            <Input name="title" required placeholder="The Great Gatsby" className="mt-1 dark:bg-gray-900 dark:border-gray-700" />
           </div>
           <div>
-            <label className="text-sm font-medium">Author Name</label>
-            <Input name="author" required placeholder="F. Scott Fitzgerald" />
+            <label className="text-sm font-medium text-text-main dark:text-gray-300">Author Name</label>
+            <Input name="author" required placeholder="F. Scott Fitzgerald" className="mt-1 dark:bg-gray-900 dark:border-gray-700" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">Category</label>
-              <select name="category" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+              <label className="text-sm font-medium text-text-main dark:text-gray-300">Category</label>
+              <select name="category" className="mt-1 flex h-10 w-full rounded-md border border-input bg-background dark:bg-gray-900 dark:border-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-forest">
                 <option value="Fiction">Fiction</option>
                 <option value="Science">Science</option>
                 <option value="History">History</option>
@@ -81,29 +81,29 @@ export default function AddBookPage() {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium">Total Copies</label>
-              <Input name="totalCopies" type="number" min="1" defaultValue="1" required />
+              <label className="text-sm font-medium text-text-main dark:text-gray-300">Total Copies</label>
+              <Input name="totalCopies" type="number" min="1" defaultValue="1" required className="mt-1 dark:bg-gray-900 dark:border-gray-700" />
             </div>
           </div>
           <div>
-            <label className="text-sm font-medium">Image URL</label>
-            <Input name="image" type="url" required placeholder="https://images.unsplash.com/..." />
+            <label className="text-sm font-medium text-text-main dark:text-gray-300">Image URL</label>
+            <Input name="image" type="url" required placeholder="https://images.unsplash.com/..." className="mt-1 dark:bg-gray-900 dark:border-gray-700" />
           </div>
           <div>
-            <label className="text-sm font-medium">Short Description</label>
-            <textarea name="description" required className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" placeholder="Describe the book..." />
+            <label className="text-sm font-medium text-text-main dark:text-gray-300">Short Description</label>
+            <textarea name="description" required className="mt-1 flex min-h-[100px] w-full rounded-md border border-input bg-background dark:bg-gray-900 dark:border-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-forest" placeholder="Describe the book..." />
           </div>
           <div className="grid grid-cols-2 gap-4">
              <div>
-               <label className="text-sm font-medium">Your Name (Read Only)</label>
-               <Input value={session.user.name} disabled />
+               <label className="text-sm font-medium text-text-main dark:text-gray-300">Your Name (Read Only)</label>
+               <Input value={session.user.name} disabled className="mt-1 bg-gray-100 dark:bg-gray-800" />
              </div>
              <div>
-               <label className="text-sm font-medium">Your Email (Read Only)</label>
-               <Input value={session.user.email} disabled />
+               <label className="text-sm font-medium text-text-main dark:text-gray-300">Your Email (Read Only)</label>
+               <Input value={session.user.email} disabled className="mt-1 bg-gray-100 dark:bg-gray-800" />
              </div>
           </div>
-          <Button type="submit" disabled={loading} className="w-full bg-forest hover:bg-forest-light h-11 text-base">
+          <Button type="submit" disabled={loading} className="w-full bg-forest hover:bg-forest-light text-white dark:bg-terracotta dark:hover:bg-[#a37f6c] h-11 text-base mt-4">
             {loading ? "Adding..." : "Add Book"}
           </Button>
         </form>

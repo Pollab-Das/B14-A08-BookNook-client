@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
-  /* BookNook Balanced Palette */
   --color-cream: #FAF8F2;
   --color-forest: #1E423F;
   --color-forest-light: #2A5A56;
@@ -13,7 +14,84 @@
   --color-border-light: #E8E4DC;
 }
 
+:root {
+  --background: #FAF8F2;
+  --foreground: #2D2A26;
+}
+
+.dark {
+  --background: #121212;
+  --foreground: #E5E7EB;
+}
+
 body {
-  background-color: var(--color-cream);
-  color: var(--color-text-main);
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 👇 থিম টগল বাটনের সঠিক সাইজ */
+#theme-toggle-button {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+#toggle {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#container,
+#patches,
+#stars,
+#button,
+#sun,
+#moon,
+#cloud {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.25s;
+}
+
+#toggle:checked + svg #container {
+  fill: #2b4360;
+}
+
+#toggle:checked + svg #button {
+  transform: translate(28px, 2.333px);
+}
+
+#sun {
+  opacity: 1;
+}
+
+#toggle:checked + svg #sun {
+  opacity: 0;
+}
+
+#moon {
+  opacity: 0;
+}
+
+#toggle:checked + svg #moon {
+  opacity: 1;
+}
+
+#cloud {
+  opacity: 1;
+}
+
+#toggle:checked + svg #cloud {
+  opacity: 0;
+}
+
+#stars {
+  opacity: 0;
+}
+
+#toggle:checked + svg #stars {
+  opacity: 1;
 }
