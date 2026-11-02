@@ -1,9 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation"; // useRouter যোগ করুন
+import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
-import { BookOpen, LogOut, PlusCircle, Menu, X, Sun, Moon } from "lucide-react";
+import { 
+  BookOpen, 
+  LogOut, 
+  PlusCircle, 
+  Menu, 
+  X, 
+  Sun, 
+  Moon, 
+  User, 
+  Settings 
+} from "lucide-react"; // 👈 User এবং Settings আইকন যোগ করা হলো
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,7 +38,7 @@ const privateLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const router = useRouter(); // রাউটার ইনিশিয়ালাইজ
+  const router = useRouter();
   const { data: session, isPending } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
@@ -52,7 +62,7 @@ export function Navbar() {
     await signOut();
     toast.success("Logged out successfully");
     setIsMobileMenuOpen(false);
-    router.push("/"); // 👇 লগআউট হলে হোম পেজে রিডাইরেক্ট হবে
+    router.push("/");
   };
 
   return (
@@ -81,7 +91,6 @@ export function Navbar() {
             </Link>
           ))}
           
-          {/* 👇 লগইন থাকলেই শুধু প্রাইভেট লিংকগুলো দেখাবে */}
           {session && privateLinks.map((link) => (
             <Link
               key={link.href}
@@ -125,12 +134,27 @@ export function Navbar() {
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
+                
+                {/* 👇 My Profile এবং Settings যোগ করা হলো */}
                 <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-[#1e1e1e] border border-border-light dark:border-gray-800 shadow-xl rounded-xl p-2">
                   <div className="px-2 py-2 mb-1 border-b border-border-light dark:border-gray-800">
                     <p className="text-sm font-bold text-forest dark:text-cream truncate">{session.user.name}</p>
                     <p className="text-xs text-text-muted dark:text-gray-400 truncate">{session.user.email}</p>
                   </div>
-                  <DropdownMenuItem className="cursor-pointer gap-2 text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/30" onClick={handleSignOut}>
+                  
+                  <Link href="/profile">
+                    <DropdownMenuItem className="cursor-pointer gap-2 text-text-main dark:text-gray-300 focus:bg-cream dark:focus:bg-gray-800">
+                      <User className="h-4 w-4" /> My Profile
+                    </DropdownMenuItem>
+                  </Link>
+                  
+                  <Link href="/profile">
+                    <DropdownMenuItem className="cursor-pointer gap-2 text-text-main dark:text-gray-300 focus:bg-cream dark:focus:bg-gray-800">
+                      <Settings className="h-4 w-4" /> Settings
+                    </DropdownMenuItem>
+                  </Link>
+
+                  <DropdownMenuItem className="cursor-pointer gap-2 text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/30 mt-1" onClick={handleSignOut}>
                     <LogOut className="h-4 w-4" /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -202,7 +226,15 @@ export function Navbar() {
                       <p className="text-xs text-text-muted dark:text-gray-400">{session.user.email}</p>
                     </div>
                   </div>
-                  <Button onClick={handleSignOut} variant="destructive" className="w-full">
+                  
+                  {/* মোবাইলের জন্যও My Profile অপশন */}
+                  <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" className="w-full justify-start border-border-light dark:border-gray-700 text-forest dark:text-cream gap-2">
+                      <User className="h-4 w-4" /> My Profile
+                    </Button>
+                  </Link>
+
+                  <Button onClick={handleSignOut} variant="destructive" className="w-full mt-2">
                     Logout
                   </Button>
                 </>
