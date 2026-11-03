@@ -23,4 +23,4 @@ BookNook is a modern, full-stack online library application where users can expl
 ## 🚀 How to Run Locally
 1. Clone the repository:
    ```bash
-   git clone <your-client-repo-link>
+   git clone <https://github.com/Pollab-Das/B14-A08-BookNook-client>
