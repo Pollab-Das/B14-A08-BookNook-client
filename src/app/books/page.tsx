@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
 const categories = ["All Categories", "Fiction", "Science", "History", "Kids", "Others"];
+const availabilityOptions = ["All Books", "Available", "Out of Stock"];
 
 export default function AllBooksPage() {
   const [books, setBooks] = useState<any[] | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
   const [activeCategory, setActiveCategory] = useState("All Categories");
+  const [activeAvailability, setActiveAvailability] = useState("All Books"); // 👈 নতুন স্টেট
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/books`, { 
@@ -25,20 +27,28 @@ export default function AllBooksPage() {
       .catch(() => setBooks([]));
   }, []);
 
-  // সার্চ, ক্যাটাগরি এবং সর্টিং লজিক একসাথে
+  // সার্চ, ক্যাটাগরি, অ্যাভেইলেবিলিটি এবং সর্টিং লজিক একসাথে
   const filteredAndSortedBooks = books
     ?.filter((book) => {
       // ১. ক্যাটাগরি ফিল্টার
       const matchesCategory = activeCategory === "All Categories" || book.category === activeCategory;
       
-      // ২. সার্চ ফিল্টার
+      // ২. অ্যাভেইলেবিলিটি ফিল্টার (Available নাকি Out of Stock)
+      let matchesAvailability = true;
+      if (activeAvailability === "Available") {
+        matchesAvailability = book.availableCopies > 0;
+      } else if (activeAvailability === "Out of Stock") {
+        matchesAvailability = book.availableCopies <= 0;
+      }
+
+      // ৩. সার্চ ফিল্টার
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch = 
         book.title.toLowerCase().includes(searchLower) || 
         book.author.toLowerCase().includes(searchLower) ||
         book.category.toLowerCase().includes(searchLower);
         
-      return matchesCategory && matchesSearch;
+      return matchesCategory && matchesSearch && matchesAvailability;
     })
     .sort((a, b) => {
       if (sortOrder === "newest") {
@@ -62,7 +72,7 @@ export default function AllBooksPage() {
         <p className="mt-2 text-text-muted dark:text-gray-400">Explore our entire collection.</p>
       </div>
 
-      {/* 👇 সার্চ, সর্ট এবং ক্যাটাগরি ফিল্টার বক্স */}
+      {/* 👇 সার্চ, সর্ট, ক্যাটাগরি এবং অ্যাভেইলেবিলিটি ফিল্টার বক্স */}
       <div className="mb-10 rounded-xl border border-border-light dark:border-gray-800 bg-white dark:bg-[#1e1e1e] p-5 shadow-sm">
         
         {/* টপ রো: সার্চ এবং সর্ট */}
@@ -91,8 +101,28 @@ export default function AllBooksPage() {
           </div>
         </div>
 
-        {/* 👇 বটম রো: ক্যাটাগরি ফিল্টার বাটন */}
-        <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-border-light dark:border-gray-800">
+        {/* মিডল রো: অ্যাভেইলেবিলিটি ফিল্টার */}
+        <div className="flex flex-wrap items-center gap-2 pb-4 border-b border-border-light dark:border-gray-800">
+          <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-gray-400 mr-2">
+            Availability:
+          </span>
+          {availabilityOptions.map((option) => (
+            <button
+              key={option}
+              onClick={() => setActiveAvailability(option)}
+              className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
+                activeAvailability === option
+                  ? "bg-ocean text-white dark:bg-ocean" // এভেইলেবিলিটির জন্য নীল/ওশান কালার
+                  : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+
+        {/* বটম রো: ক্যাটাগরি ফিল্টার বাটন */}
+        <div className="flex flex-wrap items-center gap-2 pt-4">
           <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-gray-400 mr-2">
             Categories:
           </span>
@@ -102,7 +132,7 @@ export default function AllBooksPage() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
                 activeCategory === cat
-                  ? "bg-[#E29A22] text-white dark:bg-[#E29A22]" // রেফারেন্স ছবির মতো কমলা/হলুদ রঙ
+                  ? "bg-[#E29A22] text-white dark:bg-[#E29A22]" 
                   : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
@@ -136,8 +166,8 @@ export default function AllBooksPage() {
                 </div>
                 
                 <div className="absolute bottom-3 right-3 z-10">
-                  <span className="inline-block rounded-md bg-black/60 backdrop-blur-md px-2 py-1 text-xs font-medium text-white">
-                    {book.availableCopies} Copies Left
+                  <span className={`inline-block rounded-md px-2 py-1 text-xs font-medium text-white backdrop-blur-md ${book.availableCopies > 0 ? 'bg-black/60' : 'bg-red-600/80'}`}>
+                    {book.availableCopies > 0 ? `${book.availableCopies} Copies Left` : "Out of Stock"}
                   </span>
                 </div>
               </div>
@@ -153,8 +183,11 @@ export default function AllBooksPage() {
                 
                 <div className="mt-auto pt-5">
                   <Link href={`/books/${book._id}`}>
-                    <Button className="w-full bg-forest hover:bg-forest-light text-white dark:bg-terracotta dark:hover:bg-[#a37f6c] font-semibold">
-                      View Details
+                    <Button 
+                      className={`w-full font-semibold ${book.availableCopies > 0 ? 'bg-forest hover:bg-forest-light text-white dark:bg-terracotta dark:hover:bg-[#a37f6c]' : 'bg-gray-400 text-white cursor-not-allowed'}`}
+                      disabled={book.availableCopies <= 0}
+                    >
+                      {book.availableCopies > 0 ? "View Details" : "Not Available"}
                     </Button>
                   </Link>
                 </div>
@@ -164,7 +197,7 @@ export default function AllBooksPage() {
         </div>
       ) : (
         <div className="text-center py-20 text-text-muted">
-          No books found matching your search and category.
+          No books found matching your search and filters.
         </div>
       )}
     </div>
