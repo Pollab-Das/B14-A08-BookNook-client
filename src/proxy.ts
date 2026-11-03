@@ -1,32 +1,24 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { auth } from './lib/auth'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { auth } from "./lib/auth";
 
-export async function middleware(request: NextRequest) {
-  // BetterAuth 
+// 👇 ফাংশনের নাম অবশ্যই 'proxy' হতে হবে
+export async function proxy(request: NextRequest) {
   const session = await auth.api.getSession({
     headers: request.headers,
-  })
+  });
 
-  const user = session?.user
+  const user = session?.user;
 
-  // LOGIN 
   if (!user) {
-    const url = new URL('/login', request.url)
-    
-    url.searchParams.set('redirect', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+    const url = new URL("/login", request.url);
+    url.searchParams.set("redirect", request.nextUrl.pathname);
+    return NextResponse.redirect(url);
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
-
-// BookNook private route
 
 export const config = {
-  matcher: [
-    '/add-book', 
-    '/my-books', 
-    '/my-borrows'
-  ],
-}
+  matcher: ["/add-book", "/my-books", "/my-borrows"],
+};
