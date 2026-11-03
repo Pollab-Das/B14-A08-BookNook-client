@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation"; // 👈 নতুন ইমপোর্ট
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -10,12 +11,20 @@ import { Search } from "lucide-react";
 const categories = ["All Categories", "Fiction", "Science", "History", "Kids", "Others"];
 const availabilityOptions = ["All Books", "Available", "Out of Stock"];
 
-export default function AllBooksPage() {
+function AllBooksContent() {
+  const searchParams = useSearchParams();
   const [books, setBooks] = useState<any[] | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  
+  // 👇 URL থেকে সার্চ টার্ম নেওয়া (যেমন: ?search=Matt+Haig)
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const [sortOrder, setSortOrder] = useState("newest");
   const [activeCategory, setActiveCategory] = useState("All Categories");
   const [activeAvailability, setActiveAvailability] = useState("All Books");
+
+  useEffect(() => {
+    // URL পরিবর্তন হলে (যেমন Author Spotlight থেকে ক্লিক করলে) সার্চ বক্স আপডেট হবে
+    setSearchTerm(searchParams.get("search") || "");
+  }, [searchParams]);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/books`, { 
@@ -57,37 +66,8 @@ export default function AllBooksPage() {
       return 0;
     });
 
-  // 👇 অল বুকস পেজের স্কেলেটন লোডিং
   if (books === null) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-pulse">
-        <div className="mb-10 text-center">
-          <div className="h-10 w-48 mx-auto bg-gray-200 dark:bg-gray-800 rounded-md mb-3"></div>
-          <div className="h-4 w-64 mx-auto bg-gray-200 dark:bg-gray-800 rounded-md"></div>
-        </div>
-
-        {/* ফিল্টার বক্সের স্কেলেটন */}
-        <div className="mb-10 h-44 w-full rounded-xl border border-border-light dark:border-gray-800 bg-white dark:bg-[#1e1e1e] p-5">
-           <div className="h-11 w-3/5 bg-gray-200 dark:bg-gray-800 rounded-md mb-5"></div>
-           <div className="h-8 w-full bg-gray-200 dark:bg-gray-800 rounded-md mb-4"></div>
-           <div className="h-8 w-full bg-gray-200 dark:bg-gray-800 rounded-md"></div>
-        </div>
-
-        {/* কার্ডের স্কেলেটন */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-gray-800 bg-white dark:bg-[#1e1e1e]">
-              <div className="h-64 w-full bg-gray-200 dark:bg-gray-800" />
-              <div className="p-5 space-y-3">
-                <div className="h-6 w-3/4 bg-gray-200 dark:bg-gray-800 rounded"></div>
-                <div className="h-4 w-1/2 bg-gray-200 dark:bg-gray-800 rounded"></div>
-                <div className="h-10 w-full bg-gray-200 dark:bg-gray-800 rounded-md mt-4"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <div className="text-center py-20 text-text-muted">Loading books...</div>;
   }
 
   return (
@@ -97,7 +77,6 @@ export default function AllBooksPage() {
         <p className="mt-2 text-text-muted dark:text-gray-400">Explore our entire collection.</p>
       </div>
 
-      {/* ফিল্টার বক্স */}
       <div className="mb-10 rounded-xl border border-border-light dark:border-gray-800 bg-white dark:bg-[#1e1e1e] p-5 shadow-sm">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-5">
           <div className="relative w-full md:w-3/5">
@@ -125,14 +104,16 @@ export default function AllBooksPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 pb-4 border-b border-border-light dark:border-gray-800">
-          <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-gray-400 mr-2">Availability:</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-gray-400 mr-2">
+            Availability:
+          </span>
           {availabilityOptions.map((option) => (
             <button
               key={option}
               onClick={() => setActiveAvailability(option)}
               className={`px-4 py-1.5 text-sm font-medium rounded-full transition-colors ${
                 activeAvailability === option
-                  ? "bg-ocean text-white dark:bg-ocean"
+                  ? "bg-ocean text-white dark:bg-ocean" 
                   : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
@@ -142,7 +123,9 @@ export default function AllBooksPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 pt-4">
-          <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-gray-400 mr-2">Categories:</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-text-muted dark:text-gray-400 mr-2">
+            Categories:
+          </span>
           {categories.map((cat) => (
             <button
               key={cat}
@@ -159,14 +142,10 @@ export default function AllBooksPage() {
         </div>
       </div>
 
-      {/* গ্রিড */}
       {filteredAndSortedBooks && filteredAndSortedBooks.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredAndSortedBooks.map((book) => (
-            <div 
-              key={book._id} 
-              className="group flex flex-col overflow-hidden rounded-xl border border-border-light bg-white shadow-sm transition-all hover:shadow-md dark:bg-[#1e1e1e] dark:border-gray-800"
-            >
+            <div key={book._id} className="group flex flex-col overflow-hidden rounded-xl border border-border-light bg-white shadow-sm transition-all hover:shadow-md dark:bg-[#1e1e1e] dark:border-gray-800">
               <div className="relative h-64 w-full bg-cream-dark dark:bg-gray-900 overflow-hidden">
                 <Image src={book.image} alt={book.title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 <div className="absolute top-3 left-3 z-10">
@@ -180,17 +159,12 @@ export default function AllBooksPage() {
                   </span>
                 </div>
               </div>
-
               <div className="flex flex-1 flex-col p-5">
                 <h3 className="mt-1 font-serif text-xl font-bold text-forest dark:text-cream line-clamp-1">{book.title}</h3>
                 <p className="text-sm text-text-muted dark:text-gray-400 mt-1">by {book.author}</p>
-                
                 <div className="mt-auto pt-5">
                   <Link href={`/books/${book._id}`}>
-                    <Button 
-                      className={`w-full font-semibold ${book.availableCopies > 0 ? 'bg-forest hover:bg-forest-light text-white dark:bg-terracotta dark:hover:bg-[#a37f6c]' : 'bg-gray-400 text-white cursor-not-allowed'}`}
-                      disabled={book.availableCopies <= 0}
-                    >
+                    <Button className={`w-full font-semibold ${book.availableCopies > 0 ? 'bg-forest hover:bg-forest-light text-white dark:bg-terracotta dark:hover:bg-[#a37f6c]' : 'bg-gray-400 text-white cursor-not-allowed'}`} disabled={book.availableCopies <= 0}>
                       {book.availableCopies > 0 ? "View Details" : "Not Available"}
                     </Button>
                   </Link>
@@ -200,8 +174,19 @@ export default function AllBooksPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 text-text-muted">No books found matching your search and filters.</div>
+        <div className="text-center py-20 text-text-muted">
+          No books found matching your search and filters.
+        </div>
       )}
     </div>
+  );
+}
+
+// 👇 useSearchParams ব্যবহার করার জন্য Suspense দিয়ে র‍্যাপ করা হলো
+export default function AllBooksPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20 text-text-muted">Loading...</div>}>
+      <AllBooksContent />
+    </Suspense>
   );
 }
