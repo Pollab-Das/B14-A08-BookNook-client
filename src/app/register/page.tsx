@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+
+import { useState, useEffect } from "react"; 
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signUp, signIn } from "@/lib/auth-client"; // signIn ইমপোর্ট করা হলো
+import { signUp, signIn } from "@/lib/auth-client"; // signIn 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -15,6 +17,10 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+    useEffect(() => {
+    document.title = "BookNook | Register";
+  }, []);
+    
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -50,10 +56,11 @@ export default function RegisterPage() {
     router.push("/login");
   };
 
+
   const handleGoogleSignUp = async () => {
     setGoogleLoading(true);
     try {
-      // গুগল সাইনআপের জন্যও signIn.social ব্যবহার করতে হবে
+      // signIn.social
       const { data, error } = await signIn.social({
         provider: "google",
         callbackURL: "/",
@@ -74,6 +81,8 @@ export default function RegisterPage() {
       setGoogleLoading(false);
     }
   };
+
+  
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center p-4">

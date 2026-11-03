@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation"; // 👈 নতুন ইমপোর্ট
+import { useSearchParams } from "next/navigation"; 
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -15,14 +15,14 @@ function AllBooksContent() {
   const searchParams = useSearchParams();
   const [books, setBooks] = useState<any[] | null>(null);
   
-  // 👇 URL থেকে সার্চ টার্ম নেওয়া (যেমন: ?search=Matt+Haig)
+  
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const [sortOrder, setSortOrder] = useState("newest");
   const [activeCategory, setActiveCategory] = useState("All Categories");
   const [activeAvailability, setActiveAvailability] = useState("All Books");
 
   useEffect(() => {
-    // URL পরিবর্তন হলে (যেমন Author Spotlight থেকে ক্লিক করলে) সার্চ বক্স আপডেট হবে
+    
     setSearchTerm(searchParams.get("search") || "");
   }, [searchParams]);
 
@@ -34,6 +34,10 @@ function AllBooksContent() {
       .then((res) => res.json())
       .then((data) => setBooks(data))
       .catch(() => setBooks([]));
+  }, []);
+
+    useEffect(() => {
+    document.title = "BookNook | All Books"; 
   }, []);
 
   const filteredAndSortedBooks = books
@@ -182,7 +186,7 @@ function AllBooksContent() {
   );
 }
 
-// 👇 useSearchParams ব্যবহার করার জন্য Suspense দিয়ে র‍্যাপ করা হলো
+// useSearchParams , Suspense 
 export default function AllBooksPage() {
   return (
     <Suspense fallback={<div className="text-center py-20 text-text-muted">Loading...</div>}>

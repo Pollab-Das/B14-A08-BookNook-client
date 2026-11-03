@@ -3,6 +3,11 @@ import { headers } from "next/headers";
 import { redirect, notFound } from "next/navigation";
 import BookDetailsClient from "./BookDetailsClient";
 
+// books/[id]
+export const metadata = {
+  title: "BookNook | Book Details",
+};
+
 export default async function BookDetailsPage({ 
   params 
 }: { 
@@ -10,25 +15,25 @@ export default async function BookDetailsPage({
 }) {
   const { id } = await params;
 
-  // 👇 ১. সার্ভার সাইডে BetterAuth সেশন চেক
+  // BetterAuth 
   const session = await auth.api.getSession({ headers: await headers() });
   
-  // লগইন না থাকলে সরাসরি লগইন পেজে পাঠাবে এবং লগইনের পর আবার এই বুকেই ফেরত আনবে
+  // login 
   if (!session) {
     redirect(`/login?redirect=/books/${id}`);
   }
 
-  // 👇 ২. সার্ভার থেকে বইয়ের ডেটা ফেচ করা
+  // 👇 fetch data 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/books/${id}`, { 
     cache: "no-store" 
   });
   
   if (!res.ok) {
-    notFound(); // বই না পাওয়া গেলে 404 পেজ দেখাবে
+    notFound(); // 404 
   }
   
   const book = await res.json();
 
-  // 👇 ৩. ক্লায়েন্ট কম্পোনেন্টে ডেটা এবং সেশন পাস করা
+  // client 
   return <BookDetailsClient book={book} session={session} />;
 }

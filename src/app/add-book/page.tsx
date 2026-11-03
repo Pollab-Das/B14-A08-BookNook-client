@@ -8,17 +8,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { UploadCloud } from "lucide-react"; // ইমেজ আপলোডের আইকন
+import { UploadCloud } from "lucide-react"; 
 
 export default function AddBookPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
   const { fetchWithAuth } = useApi();
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState(""); // ইমেজ URL স্টেট
-  const [uploading, setUploading] = useState(false); // আপলোড লোডিং স্টেট
+  const [imageUrl, setImageUrl] = useState(""); 
+  const [uploading, setUploading] = useState(false); 
 
-  // সেশন চেক
+  
   useEffect(() => {
     if (!isPending && !session) {
       toast.error("Please login to add a book.");
@@ -30,7 +30,11 @@ export default function AddBookPage() {
     return <div className="text-center py-20 text-text-muted">Loading...</div>;
   }
 
-  // 👇 ImgBB-তে ইমেজ আপলোড করার ফাংশন
+    useEffect(() => {
+    document.title = "BookNook | Add Book";
+  }, []);
+
+  // 👇 ImgBB
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -73,9 +77,9 @@ export default function AddBookPage() {
     const formData = new FormData(e.currentTarget);
     const data: any = Object.fromEntries(formData.entries());
     
-    // totalCopies কে নাম্বারে কনভার্ট করা
+    // totalCopies 
     data.totalCopies = Number(data.totalCopies);
-    // imageUrl ফিল্ডে আমাদের আপলোড করা লিংকটা সেট করা
+    // imageUrl 
     data.image = imageUrl;
 
     try {
@@ -130,7 +134,7 @@ export default function AddBookPage() {
             </div>
           </div>
 
-          {/* 👇 ইমেজ আপলোড সেকশন */}
+          {/* 👇 image upload*/}
           <div className="border-2 border-dashed border-border-light dark:border-gray-700 rounded-lg p-4 text-center">
             <label className="text-sm font-medium text-text-main dark:text-gray-300">Book Image</label>
             <div className="mt-2 flex flex-col items-center gap-3">

@@ -11,7 +11,7 @@ import { format } from "date-fns";
 export default function MyBorrowsPage() {
   const { data: session, isPending } = useSession();
   const { fetchWithAuth } = useApi();
-  const [borrows, setBorrows] = useState<any[] | null>(null); // 👈 null দিয়ে ইনিশিয়ালাইজ
+  const [borrows, setBorrows] = useState<any[] | null>(null); // 👈 null 
 
   const loadBorrows = () => {
     if (session?.user?.email) {
@@ -25,6 +25,10 @@ export default function MyBorrowsPage() {
 
   useEffect(() => { loadBorrows(); }, [session]);
 
+    useEffect(() => {
+    document.title = "BookNook | My Borrows";
+  }, []);
+
   const handleReturn = async (id: string) => {
     try {
       await fetchWithAuth(`/borrows/${id}`, { method: "DELETE" });
@@ -35,7 +39,7 @@ export default function MyBorrowsPage() {
     }
   };
 
-  // 👇 My Borrows টেবিল স্কেলেটন লোডিং
+  // 👇 My Borrows 
   if (isPending || borrows === null) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-pulse">
@@ -89,7 +93,7 @@ export default function MyBorrowsPage() {
                   <td className="px-6 py-4">{format(new Date(borrow.borrowDate), "MMM dd, yyyy")}</td>
                   <td className="px-6 py-4 text-terracotta font-medium">{format(new Date(borrow.returnDate), "MMM dd, yyyy")}</td>
                   <td className="px-6 py-4 text-right">
-                    {/* 👇 Return বাটনে text-white যোগ করা হয়েছে */}
+                    {/* 👇 Return buttom text-white  */}
                     <Button 
                       onClick={() => handleReturn(borrow._id)} 
                       className="bg-forest hover:bg-forest-light dark:bg-terracotta dark:hover:bg-[#a37f6c] text-white font-medium"

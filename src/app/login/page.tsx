@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect } from "react"; 
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "@/lib/auth-client";
@@ -15,6 +16,10 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
+    useEffect(() => {
+    document.title = "BookNook | Login";
+  }, []);
 
   const redirectTo = searchParams.get("redirect") || "/";
 
@@ -42,7 +47,7 @@ function LoginForm() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      // BetterAuth-এর জন্য signIn.social ব্যবহার করা বাধ্যতামূলক
+      // BetterAuth-
       const { data, error } = await signIn.social({
         provider: "google",
         callbackURL: redirectTo,

@@ -12,7 +12,7 @@ import { Trash2, Edit } from "lucide-react";
 export default function MyBooksPage() {
   const { data: session, isPending } = useSession();
   const { fetchWithAuth } = useApi();
-  const [books, setBooks] = useState<any[] | null>(null); // 👈 null দিয়ে ইনিশিয়ালাইজ
+  const [books, setBooks] = useState<any[] | null>(null); // 👈 null 
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -22,6 +22,10 @@ export default function MyBooksPage() {
         .catch(() => setBooks([]));
     }
   }, [session]);
+
+    useEffect(() => {
+    document.title = "BookNook | My Books";
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this book?")) return;
@@ -34,7 +38,7 @@ export default function MyBooksPage() {
     }
   };
 
-  // 👇 My Books টেবিল স্কেলেটন লোডিং
+  // 👇 My Books 
   if (isPending || books === null) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 animate-pulse">
