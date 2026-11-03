@@ -13,7 +13,7 @@ import {
   Moon, 
   User, 
   Settings 
-} from "lucide-react"; // 👈 User এবং Settings আইকন যোগ করা হলো
+} from "lucide-react"; 
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

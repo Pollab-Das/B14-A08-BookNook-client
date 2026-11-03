@@ -20,7 +20,7 @@ export function useApi() {
       headers,
     });
 
-    // 👇 রেসপন্স JSON কিনা চেক করা হচ্ছে
+    // JSON ki na chek kore
     const text = await res.text();
     let result;
     try {

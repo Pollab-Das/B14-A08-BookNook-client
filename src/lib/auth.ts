@@ -18,12 +18,12 @@ export const auth = betterAuth({
     },
   },
   plugins: [jwt()],
-  // 👇 এখানে আপনার সব Vercel ডোমেইন যোগ করুন
+  // Vercel 
   trustedOrigins: [
     "http://localhost:3000",
     "https://b14-a08-book-nook-client.vercel.app",
     "https://b14-a08-book-nook-client-git-main-b14-a5-dev-stack.vercel.app",
-    // চাইলে Vercel-এর সব প্রিভিউ ডোমেইন অ্যালাউ করতে:
+    
     ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
   ],
 });

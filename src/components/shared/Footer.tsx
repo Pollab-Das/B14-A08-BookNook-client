@@ -51,7 +51,7 @@ export function Footer() {
                 <MapPin className="h-4 w-4" /> Dhaka, Bangladesh
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4" /> +880 1234 567890
+                <Phone className="h-4 w-4" /> +880 17417 35802
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4" /> hello@booknook.com

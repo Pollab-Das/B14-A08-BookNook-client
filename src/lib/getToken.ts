@@ -1,6 +1,6 @@
 import { authClient } from "./auth-client";
 
-// ক্লায়েন্ট সাইডে ব্যবহারের জন্য
+// client site used
 export const getTokenFromClient = async () => {
   const { data } = await authClient.token();
   return data?.token;
